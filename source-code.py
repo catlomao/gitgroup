@@ -6,14 +6,14 @@ import os
 CONFIG_FILE = ".gitgroup.json"
 
 class GitGroup:
-    # >> A multiplex Git management tool (gitgroup) << made by catlomao
-    # please dont steal, give credit!!!
+    """A multiplex Git management tool (gitgroup)"""
 
     def __init__(self):
         if not os.path.exists(CONFIG_FILE):
             self.init()
 
-    def init(self, *args):
+    def init(self, args=None):
+        """Initialize the .gitgroup.json file"""
         if not os.path.exists(CONFIG_FILE):
             with open(CONFIG_FILE, "w") as f:
                 json.dump({"repositories": []}, f, indent=4)
@@ -21,43 +21,48 @@ class GitGroup:
         else:
             print(".gitgroup.json already exists")
 
-    def run(self, *args):
+    def run(self, args):
+        """Run a Git command on all repositories"""
         with open(CONFIG_FILE, "r") as f:
             data = json.load(f)
-        git = " ".join(args)
+
+        git_command = " ".join(args.git_command)  # Convert list to command string
+
         if data["repositories"]:
-            print("Repositories:")
+            print("Executing Git command in repositories:")
             for repo in data["repositories"]:
-                os.system(f"git --git-dir={repo}/.git --work-tree={repo} {git}")
+                os.system(f"git --git-dir={repo}/.git --work-tree={repo} {git_command}")
         else:
             print("No repositories found.")
 
-    def add(self, *args):
-        if not args:
-            print("Error: Please give a repository name to add.")
+    def add(self, args):
+        """Add repositories to the group"""
+        if not args.repositories:
+            print("Error: Please specify at least one repository to add.")
             return
-        
+
         with open(CONFIG_FILE, "r") as f:
             data = json.load(f)
 
-        data["repositories"].extend(args)
+        data["repositories"].extend(args.repositories)
         data["repositories"] = list(set(data["repositories"]))  # Remove duplicates
 
         with open(CONFIG_FILE, "w") as f:
             json.dump(data, f, indent=4)
 
-        print(f"Added: {', '.join(args)}")
+        print(f"Added: {', '.join(args.repositories)}")
 
-    def rm(self, *args):
-        if not args:
-            print("Error: Please give a repository name to remove.")
+    def rm(self, args):
+        """Remove repositories from the group"""
+        if not args.repositories:
+            print("Error: Please specify at least one repository to remove.")
             return
 
         with open(CONFIG_FILE, "r") as f:
             data = json.load(f)
 
-        removed = [repo for repo in args if repo in data["repositories"]]
-        data["repositories"] = [repo for repo in data["repositories"] if repo not in args]
+        removed = [repo for repo in args.repositories if repo in data["repositories"]]
+        data["repositories"] = [repo for repo in data["repositories"] if repo not in args.repositories]
 
         with open(CONFIG_FILE, "w") as f:
             json.dump(data, f, indent=4)
@@ -65,9 +70,10 @@ class GitGroup:
         if removed:
             print(f"Removed: {', '.join(removed)}")
         else:
-            print("Nothing to remove....?")
+            print("Nothing to remove.")
 
-    def ls(self, *args):
+    def ls(self, args=None):
+        """List all repositories"""
         with open(CONFIG_FILE, "r") as f:
             data = json.load(f)
 
@@ -78,25 +84,36 @@ class GitGroup:
         else:
             print("No repositories found.")
 
-    def execute(self, command, *args):
-        if hasattr(self, command):
-            getattr(self, command)(*args)
-        else:
-            print(f"Error: Unknown command '{command}'")
-            sys.exit(1)
-
 def main():
     parser = argparse.ArgumentParser(description="A multiplex Git management tool (gitgroup)")
-    parser.add_argument("add", type=str, help="adds repo to group")
-    parser.add_argument("rm", type=str, help="removes a repo from group")
-    parser.add_argument("ls", type=str, help="list all repos in group")
-    parser.add_argument("init", type=str, help="initializes the current folder (.gitgroup.json)")
-    parser.add_argument("run", type=str, help="executes git commands for each repo EXAMPLE <gitgroup run <git command like status or push whatever> >")
+    subparsers = parser.add_subparsers(dest="command", required=True)
 
+    # Add Command
+    parser_add = subparsers.add_parser("add", help="Add repositories to the group")
+    parser_add.add_argument("repositories", nargs="+", help="Repository paths to add")
+    parser_add.set_defaults(func=GitGroup().add)
+
+    # Remove Command
+    parser_rm = subparsers.add_parser("rm", help="Remove repositories from the group")
+    parser_rm.add_argument("repositories", nargs="+", help="Repository paths to remove")
+    parser_rm.set_defaults(func=GitGroup().rm)
+
+    # List Command
+    parser_ls = subparsers.add_parser("ls", help="List all repositories in the group")
+    parser_ls.set_defaults(func=GitGroup().ls)
+
+    # Init Command
+    parser_init = subparsers.add_parser("init", help="Initialize the .gitgroup.json file")
+    parser_init.set_defaults(func=GitGroup().init)
+
+    # Run Command
+    parser_run = subparsers.add_parser("run", help="Execute Git commands in all repositories")
+    parser_run.add_argument("git_command", nargs=argparse.REMAINDER, help="Git command to execute")
+    parser_run.set_defaults(func=GitGroup().run)
+
+    # Parse Arguments
     args = parser.parse_args()
-
-    gitgroup = GitGroup()
-    gitgroup.execute(args.command, *args.arguments)
+    args.func(args)  # Call the appropriate function
 
 if __name__ == "__main__":
     main()
