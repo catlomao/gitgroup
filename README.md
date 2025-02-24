@@ -3,5 +3,5 @@
 A multiplex Git management tool (gitgroup)
 ## install using
 ```
-sh -c "$(curl -sS example.com/bash.sh)"
+sh -c "$(curl -sS https://raw.githubusercontent.com/catlomao/gitgroup/refs/heads/main/installer.sh)"
 ```
