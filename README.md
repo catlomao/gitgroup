@@ -1,3 +1,4 @@
+
 ![gitgroup](https://raw.githubusercontent.com/catlomao/gitgroup/refs/heads/main/gitgroup.png)
 # gitgroup
 A multiplex Git management tool (gitgroup)
@@ -21,3 +22,5 @@ positional arguments:
 options:
   -h, --help  show this help message and exit
 ```
+
+# if you have any issues,  [please open a issue !!!](https://github.com/catlomao/gitgroup/issues)
