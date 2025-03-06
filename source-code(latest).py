@@ -1,5 +1,5 @@
 import argparse
-import sys
+# Removed module "sys" because it useless! (there is no use for it within the code)
 import json
 import os
 
