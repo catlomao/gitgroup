@@ -5,7 +5,7 @@ DESTINATION="/usr/bin/gitgroup"
 
 # Download the file
 echo "Downloading file..."
-curl -L -o /tmp/gitgroup "https://github.com/catlomao/gitgroup/releases/download/v1/gitgroup"
+curl -L -o /tmp/gitgroup "https://github.com/catlomao/gitgroup/releases/download/v2/gitgroup"
 
 # Move the file to /usr/bin (requires sudo)
 echo "Moving file to /usr/bin..."
