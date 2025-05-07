@@ -2,7 +2,10 @@
 ![gitgroup](https://raw.githubusercontent.com/catlomao/gitgroup/refs/heads/main/gitgroup.png)
 # gitgroup
 A multiplex Git management tool (gitgroup)
-## install using (update command and version info is coming soon, if you had bugs with the software, try running the same command again, if you on windows check Releases)
+
+-# (update command and version info is coming soon, if you had bugs with the software, try running the same command again, if you on windows check Releases)
+
+## install using 
 ```
 sh -c "$(curl -sS https://raw.githubusercontent.com/catlomao/gitgroup/refs/heads/main/installer.sh)"
 ```
